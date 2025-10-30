@@ -10,8 +10,7 @@ coverImage: ""
 publishedAt: "2023-12-28T18:49:02.348Z"
 ---
 
-|  |  |  |
-| --- | --- | --- |
+[table]
 
 ## Hey, I'm Andre! 👋
 
