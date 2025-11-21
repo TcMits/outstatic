@@ -10,12 +10,6 @@ coverImage: ""
 publishedAt: "2023-12-28T18:49:02.348Z"
 ---
 
-
-|     |
-| --- |
-|     |
-
-
 ## Hey, I'm Andre! 👋
 
 🤖 Product Developer & Designer  
@@ -40,10 +34,4 @@ React, Next.js, TailwindCSS, WebGL, ThreeJS, PHP, MySQL, WordPress, OpenAI APIs,
 🐧 [X](https://twitter.com/andrevitorio)  
 💼 [LinkedIn](https://www.linkedin.com/in/andrevitorio)
 
-
-
-
-
-
-
-/
+![test](/images/screenshot-2025-11-13-at-18.11.40-I3Mz.png)
