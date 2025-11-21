@@ -1,11 +1,14 @@
-import { BubbleMenu, Editor } from '@tiptap/react'
+import { BubbleMenu } from '@tiptap/react/menus'
+import { Editor } from '@tiptap/react'
+
 import {
   Heading,
   ListX,
   PanelBottomClose,
   PanelLeftClose,
   PanelRightClose,
-  PanelTopCloseIcon
+  PanelTopCloseIcon,
+  X,
 } from 'lucide-react'
 import { useCallback } from 'react'
 import { EditorBubbleButton } from '../ui/editor-bubble-button'
@@ -26,9 +29,9 @@ const TableMenu = ({ editor }: TableMenuProps) => {
     <BubbleMenu
       editor={editor}
       shouldShow={shouldShow}
-      tippyOptions={{
-        duration: 100,
-        maxWidth: 500
+      options={{
+        offset: 6,
+        placement: 'top',
       }}
     >
       <div className="flex rounded-md border border-muted bg-background shadow-md transition-all">
@@ -75,6 +78,12 @@ const TableMenu = ({ editor }: TableMenuProps) => {
           name="Toggle Header row"
         >
           <Heading className="text-foreground" size={18} />
+        </EditorBubbleButton>
+        <EditorBubbleButton
+          onSelect={() => editor.chain().focus().deleteTable().run()}
+          name="Delete table"
+        >
+          <X className="text-foreground" size={18} />
         </EditorBubbleButton>
       </div>
     </BubbleMenu>

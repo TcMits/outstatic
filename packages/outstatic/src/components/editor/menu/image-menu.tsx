@@ -3,8 +3,7 @@ import { useFileStore } from '@/utils/hooks/useFileStore'
 import { Editor } from '@tiptap/core'
 import { EditorBubbleButton } from '@/components/editor/ui/editor-bubble-button'
 import { LinkSelector } from '@/components/editor/selectors/link-selector'
-import { BubbleMenu } from '@tiptap/react'
-import { ChevronLeft } from 'lucide-react'
+import { BubbleMenu } from '@tiptap/react/menus'
 
 type ImageMenuProps = {
   editor: Editor
@@ -60,9 +59,9 @@ const ImageMenu = ({ editor }: ImageMenuProps) => {
     <BubbleMenu
       editor={editor}
       shouldShow={shouldShow}
-      tippyOptions={{
-        duration: 100,
-        maxWidth: 500
+      options={{
+        offset: 6,
+        placement: 'top',
       }}
     >
       <div className="flex rounded-md border border-muted bg-background shadow-md transition-all">

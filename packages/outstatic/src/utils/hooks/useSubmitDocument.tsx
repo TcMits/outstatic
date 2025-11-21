@@ -114,7 +114,7 @@ function useSubmitDocument({
           )?.path + '/'
 
         const document = methods.getValues()
-        const mdContent = editor.storage.markdown.getMarkdown()
+        const mdContent = editor.getMarkdown()
         let content = mergeMdMeta({
           data: { ...documentMetadata, ...data, content: mdContent },
           basePath,

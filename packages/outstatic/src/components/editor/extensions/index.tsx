@@ -1,32 +1,23 @@
-import { AnyExtension, InputRule } from '@tiptap/core'
+import { AnyExtension } from '@tiptap/core'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import Highlight from '@tiptap/extension-highlight'
 import HorizontalRule from '@tiptap/extension-horizontal-rule'
 import Image from '@tiptap/extension-image'
-import Table from '@tiptap/extension-table'
-import TableCell from '@tiptap/extension-table-cell'
-import TableHeader from '@tiptap/extension-table-header'
-import TableRow from '@tiptap/extension-table-row'
+import { Table, TableCell, TableHeader, TableRow } from '@tiptap/extension-table'
 import TiptapUnderline from '@tiptap/extension-underline'
 import { ReactNodeViewRenderer } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { common, createLowlight } from 'lowlight'
-import { Markdown } from 'tiptap-markdown'
 import CodeBlock from '@/components/editor/extensions/code-block'
 import SlashCommand from '@/components/editor/extensions/slash-command'
 import { ToggleClass } from '@/components/editor/extensions/toggle-class'
 import { Mathematics } from '@/components/editor/extensions/mathematics'
 import LinkParser from '@/components/editor/extensions/link-parser'
-import { AIHighlight } from 'novel/extensions'
 import { cn } from '@/utils/ui'
+import { Markdown } from '@tiptap/markdown'
 
 export const TiptapExtensions = [
-  Markdown.configure({
-    html: false,
-    linkify: false,
-    transformPastedText: true
-  }),
-  AIHighlight,
+  Markdown,
   StarterKit.configure({
     bulletList: {
       HTMLAttributes: {
@@ -63,29 +54,7 @@ export const TiptapExtensions = [
     }
   }),
   ToggleClass,
-  // patch to fix horizontal rule bug: https://github.com/ueberdosis/tiptap/pull/3859#issuecomment-1536799740
-  HorizontalRule.extend({
-    addInputRules() {
-      return [
-        new InputRule({
-          find: /^(?:---|—-|___\s|\*\*\*\s)$/,
-          handler: ({ state, range }) => {
-            const attributes = {}
-
-            const { tr } = state
-            const start = range.from
-            let end = range.to
-
-            // @ts-ignore
-            tr.insert(start - 1, this.type.create(attributes)).delete(
-              tr.mapping.map(start),
-              tr.mapping.map(end)
-            )
-          }
-        })
-      ]
-    }
-  }).configure({
+  HorizontalRule.configure({
     HTMLAttributes: {
       class: 'mt-4 mb-6 border-t border-muted'
     }

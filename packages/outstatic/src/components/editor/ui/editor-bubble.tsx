@@ -1,8 +1,8 @@
-import { BubbleMenu, isNodeSelection } from '@tiptap/react'
-import { useMemo, useRef, useEffect, forwardRef } from 'react'
-import type { BubbleMenuProps } from '@tiptap/react'
+import { BubbleMenu } from '@tiptap/react/menus'
+import { isNodeSelection } from '@tiptap/react'
+import { useMemo, forwardRef } from 'react'
+import type { BubbleMenuProps } from '@tiptap/react/menus'
 import type { ReactNode } from 'react'
-import type { Instance, Props } from 'tippy.js'
 import { useEditor } from '../editor-context'
 
 export interface EditorBubbleProps extends Omit<BubbleMenuProps, 'editor'> {
@@ -10,16 +10,8 @@ export interface EditorBubbleProps extends Omit<BubbleMenuProps, 'editor'> {
 }
 
 export const EditorBubble = forwardRef<HTMLDivElement, EditorBubbleProps>(
-  ({ children, tippyOptions, ...rest }, ref) => {
+  ({ children, options, ...rest }, ref) => {
     const { editor: currentEditor } = useEditor()
-    const instanceRef = useRef<Instance<Props> | null>(null)
-
-    useEffect(() => {
-      if (!instanceRef.current || !tippyOptions?.placement) return
-
-      instanceRef.current.setProps({ placement: tippyOptions.placement })
-      instanceRef.current.popperInstance?.update()
-    }, [tippyOptions?.placement])
 
     const bubbleMenuProps: Omit<EditorBubbleProps, 'children'> = useMemo(() => {
       const shouldShow: BubbleMenuProps['shouldShow'] = ({ editor, state }) => {
@@ -44,16 +36,13 @@ export const EditorBubble = forwardRef<HTMLDivElement, EditorBubbleProps>(
 
       return {
         shouldShow,
-        tippyOptions: {
-          onCreate: (val) => {
-            instanceRef.current = val
-          },
+        options: {
           moveTransition: 'transform 0.15s ease-out',
-          ...tippyOptions
+          ...options
         },
         ...rest
       }
-    }, [rest, tippyOptions])
+    }, [rest, options])
 
     if (!currentEditor) return null
 

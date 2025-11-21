@@ -1,11 +1,11 @@
 import { Extension, Range } from '@tiptap/core'
-import { Editor, ReactRenderer } from '@tiptap/react'
+import { Editor, ReactRenderer, posToDOMRect } from '@tiptap/react'
 import Suggestion from '@tiptap/suggestion'
 import { ReactNode, useState } from 'react'
-import tippy from 'tippy.js'
 import { BaseCommandList } from '@/components/editor/extensions/slash-command/BaseCommandList'
 import ImageCommandList from '@/components/editor/extensions/slash-command/ImageCommandList'
 import { getSuggestionItems } from '@/components/editor/extensions/slash-command/getSuggestionItems'
+import { computePosition, shift, flip } from '@floating-ui/dom'
 
 export type CommandItemProps = {
   title: string
@@ -97,39 +97,56 @@ const CommandList = ({
   ) : null
 }
 
+const updatePosition = (editor: Editor, element: HTMLElement) => {
+  const virtualElement = {
+    getBoundingClientRect: () => posToDOMRect(editor.view, editor.state.selection.from, editor.state.selection.to),
+  }
+
+  computePosition(virtualElement, element, {
+    placement: 'bottom-start',
+    strategy: 'absolute',
+    middleware: [shift(), flip()],
+  }).then(({ x, y, strategy }) => {
+    element.style.width = 'max-content'
+    element.style.position = strategy
+    element.style.left = `${x}px`
+    element.style.top = `${y}px`
+  })
+}
+
 const renderItems = () => {
   let component: ReactRenderer | null = null
-  let popup: any | null = null
 
   return {
     onStart: (props: { editor: Editor; clientRect: DOMRect }) => {
       component = new ReactRenderer(CommandList, {
         props,
-        editor: props.editor
+        editor: props.editor,
       })
 
-      // @ts-ignore
-      popup = tippy('body', {
-        getReferenceClientRect: props.clientRect,
-        appendTo: () => document.body,
-        content: component.element,
-        showOnCreate: true,
-        interactive: true,
-        trigger: 'manual',
-        placement: 'bottom-start'
-      })
+      if (!props.clientRect) {
+        return
+      }
+
+      component.element.style.position = 'absolute'
+      document.body.appendChild(component.element)
+      updatePosition(props.editor, component.element)
     },
-    onUpdate: (props: { editor: Editor; clientRect: DOMRect }) => {
+
+    onUpdate(props: { editor: Editor; clientRect: DOMRect }) {
       component?.updateProps(props)
 
-      popup &&
-        popup[0].setProps({
-          getReferenceClientRect: props.clientRect
-        })
+      if (!props.clientRect || !component) {
+        return
+      }
+
+      updatePosition(props.editor, component.element)
     },
-    onKeyDown: (props: { event: KeyboardEvent }) => {
+
+    onKeyDown(props: { event: KeyboardEvent }) {
       if (props.event.key === 'Escape') {
-        popup?.[0].hide()
+        component?.destroy()
+        component?.element.remove()
 
         return true
       }
@@ -137,10 +154,11 @@ const renderItems = () => {
       // @ts-ignore
       return component?.ref?.onKeyDown(props)
     },
-    onExit: () => {
-      popup?.[0]?.destroy()
+
+    onExit() {
       component?.destroy()
-    }
+      component?.element.remove()
+    },
   }
 }
 

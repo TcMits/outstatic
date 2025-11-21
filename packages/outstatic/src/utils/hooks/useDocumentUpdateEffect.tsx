@@ -87,7 +87,7 @@ export const useDocumentUpdateEffect = ({
 
       Promise.resolve().then(() => {
         methods.reset(newDocument)
-        editor.commands.setContent(parsedContent)
+        editor.commands.setContent(parsedContent, { contentType: 'markdown' })
         editor.commands.focus('start')
       })
 
